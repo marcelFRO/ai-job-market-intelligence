@@ -1,0 +1,658 @@
+{
+  "name": "Job Scraping",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "70869d87-1086-42fe-a2d0-2e23ab7f8945",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REDACTED_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Job Market Analysis",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/REDACTED_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Arkusz1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/REDACTED_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "skills": "={{ $json.skills }}",
+            "category": "={{ $json.category }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "title": "={{ $json.title }}",
+            "city": "={{ $json.city }}",
+            "company": "={{ $json.company }}",
+            "experience_level": "={{ $json.experience_level }}",
+            "workplace_type": "={{ $json.workplace_type }}",
+            "salary_from": "={{ $json.salary_from }}",
+            "salary_to": "={{ $json.salary_to }}",
+            "salary_currency": "={{ $json.salary_currency }}",
+            "employment_type": "={{ $json.employment_type }}",
+            "published_at": "={{ $json.published_at }}",
+            "link": "={{ $json.link }}",
+            "source": "={{ $json.source }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "skills", "displayName": "skills", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "category", "displayName": "category", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "title", "displayName": "title", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "city", "displayName": "city", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "company", "displayName": "company", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "experience_level", "displayName": "experience_level", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "workplace_type", "displayName": "workplace_type", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "salary_from", "displayName": "salary_from", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "salary_to", "displayName": "salary_to", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "salary_currency", "displayName": "salary_currency", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "employment_type", "displayName": "employment_type", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "published_at", "displayName": "published_at", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "link", "displayName": "link", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false},
+            {"id": "timestamp", "displayName": "timestamp", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "source", "displayName": "source", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false}
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1552, -80],
+      "id": "041395bc-7314-4012-af58-2072f63fc591",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2xc4UOyvJwmN4SIl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/blackfalcondata~pracuj-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"data analyst\",\n  \"maxResults\": 1000,\n  \"includeDetails\": true,\n  \"compact\": false,\n  \"incrementalMode\": false,\n  \"skipReposts\": false,\n  \"withSalary\": false,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, -32],
+      "id": "1f6b2c9a-adb1-4237-99bd-c831a97da61e",
+      "name": "PL - POST data analyst"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/blackfalcondata~pracuj-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"data science\",\n  \"maxResults\": 1000,\n  \"includeDetails\": true,\n  \"compact\": false,\n  \"incrementalMode\": false,\n  \"skipReposts\": false,\n  \"withSalary\": false,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, -160],
+      "id": "d93b19ab-8631-47e8-accb-86f4ac00579d",
+      "name": "PL - POST data science"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/blackfalcondata~pracuj-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"data engineer\",\n  \"maxResults\": 1000,\n  \"includeDetails\": true,\n  \"compact\": false,\n  \"incrementalMode\": false,\n  \"skipReposts\": false,\n  \"withSalary\": false,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, -288],
+      "id": "0407385d-b2fa-4e2c-b743-4a90b2689450",
+      "name": "PL - POST data engineer"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/blackfalcondata~pracuj-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"business intelligence\",\n  \"maxResults\": 1000,\n  \"includeDetails\": true,\n  \"compact\": false,\n  \"incrementalMode\": false,\n  \"skipReposts\": false,\n  \"withSalary\": false,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, -416],
+      "id": "1c6f5ad8-9704-46b6-9aa5-8c99cc9a1e8a",
+      "name": "PL - POST business intelligence"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/blackfalcondata~pracuj-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"query\": \"machine learning\",\n  \"maxResults\": 1000,\n  \"includeDetails\": true,\n  \"compact\": false,\n  \"incrementalMode\": false,\n  \"skipReposts\": false,\n  \"withSalary\": false,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, -544],
+      "id": "bc6074a9-b6e4-4f7f-8915-40373a588d2a",
+      "name": "PL - POST machine learning"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/piotrv1001~just-join-it-scraper/runs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"lang\": \"19\",\n  \"limit\": 1250,\n  \"memoryMbytes\": 4096\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [256, 144],
+      "id": "8e999622-566e-475c-8646-e7f04a9940e1",
+      "name": "JJI - POST Apify"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, 144],
+      "id": "d9c64666-d7fd-4fd9-a488-b3affa9682fa",
+      "name": "JJI - Wait",
+      "webhookId": "e34f91f6-1704-43ca-a607-09c4eab18fad"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, 144],
+      "id": "bcdac254-dbbd-46c4-b799-ee6edde76aaa",
+      "name": "JJI - GET Results"
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nTitle: {{ $json.title }}\nRequired skills: {{ $json.requiredSkills }}\nExperience level: {{ $json.experienceLevel }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, 144],
+      "id": "8f77f7c8-b6f2-434c-a5b0-b23eef8879c1",
+      "name": "JJI - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, 144],
+      "id": "d666491e-23be-43ef-8600-1a77ff12efcb",
+      "name": "JJI - Merge"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const apifyData = $input.item.json;\nconst gptText = apifyData.output[0].content[0].text;\nconst cleaned = gptText.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\nconst gpt = JSON.parse(cleaned);\n\n// Pomiń irrelevant\nif (gpt.category === \"irrelevant\") {\n  return null;\n}\n\n// Wyciągnij salary - preferuj PLN\nconst employment = apifyData.employmentTypes?.find(e => e.currency === \"pln\") \n  || apifyData.employmentTypes?.[0] \n  || {};\n\nreturn { json: {\n  // Z GPT\n  skills: gpt.skills?.join(\", \") || \"\",\n  category: gpt.category || \"\",\n  \n  // Bezpośrednio z Apify\n  title: apifyData.title || \"\",\n  city: apifyData.city || \"\",\n  company: apifyData.companyName || \"\",\n  experience_level: apifyData.experienceLevel || \"\",\n  workplace_type: apifyData.workplaceType || \"\",\n  salary_from: employment.fromPln || \"\",\n  salary_to: employment.toPln || \"\",\n  salary_currency: employment.currency || \"\",\n  employment_type: employment.type || \"\",\n  published_at: apifyData.publishedAt || \"\",\n  link: apifyData.link || \"\",\n  source: \"justjoin.it\",\n  timestamp: new Date().toISOString()\n}};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 144],
+      "id": "9db05503-62db-492c-a857-2722b32740ce",
+      "name": "JJI - Code"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, -32],
+      "id": "024893ea-a8ea-4271-b7e4-a9ae6abbff8d",
+      "name": "PL - Wait DA",
+      "webhookId": "13dfca00-55cb-445c-b3ea-176fc1f4f76b"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, -160],
+      "id": "a6488bae-a10f-470f-b0f5-1e39fbca8bbf",
+      "name": "PL - Wait DS",
+      "webhookId": "3dae3347-e5ca-479f-b372-e34657810324"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, -288],
+      "id": "3dfae311-ba35-49d9-8720-7b7bab245865",
+      "name": "PL - Wait DE",
+      "webhookId": "12da89b9-b5e6-4b01-bff3-e82cd50945f0"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, -416],
+      "id": "7fc7758f-f67d-4258-9483-0478f81574d5",
+      "name": "PL - Wait BI",
+      "webhookId": "9931e6fd-d9fe-4ce0-b89b-fcccbb749a71"
+    },
+    {
+      "parameters": {"unit": "minutes"},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [416, -544],
+      "id": "7ac2dd64-2e35-4c91-9e24-2eac6ef91321",
+      "name": "PL - Wait ML",
+      "webhookId": "9b7f7333-e5d2-4538-9ae0-6dd0a0e8236b"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const apifyData = $input.item.json;\nconst gptText = apifyData.output[0].content[0].text;\nconst cleaned = gptText.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\nconst gpt = JSON.parse(cleaned);\n\n// Pomiń irrelevant\nif (gpt.category === \"irrelevant\") {\n  return null;\n}\n\nreturn { json: {\n  // Z GPT\n  skills: Array.isArray(gpt.skills) ? gpt.skills.join(\", \") : gpt.skills || \"\",\n  category: gpt.category || \"\",\n  \n  // Bezpośrednio z Apify Pracuj.pl\n  title: apifyData.title || \"\",\n  city: apifyData.city || apifyData.location?.split(\",\")?.[0]?.trim() || \"\",\n  company: apifyData.company || \"\",\n  experience_level: apifyData.positionLevels?.[0] || \"\",\n  workplace_type: apifyData.workModes?.[0] || \"\",\n  salary_from: apifyData.salaryMin || \"\",\n  salary_to: apifyData.salaryMax || \"\",\n  salary_currency: apifyData.salaryCurrency || \"\",\n  employment_type: apifyData.contractTypes?.[0] || \"\",\n  published_at: apifyData.postedDate || \"\",\n  link: apifyData.url || \"\",\n  source: \"pracuj.pl\",\n  timestamp: new Date().toISOString()\n}};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1376, -176],
+      "id": "9a07a286-7037-40a1-ae5d-de3e20c425cf",
+      "name": "PL - Code"
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nClassify this job offer from Pracuj.pl.\n\nTitle: {{ $json.title }}\nRequirements: {{ $json.requirements }}\nTechnologies: {{ $json.technologies }}\nExperience level: {{ $json.positionLevels }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title and requirements.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, -544],
+      "id": "5f12e62f-0fe6-4c09-97a9-891150e70437",
+      "name": "PL - ML - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nClassify this job offer from Pracuj.pl.\n\nTitle: {{ $json.title }}\nRequirements: {{ $json.requirements }}\nTechnologies: {{ $json.technologies }}\nExperience level: {{ $json.positionLevels }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title and requirements.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, -416],
+      "id": "ef892721-09e1-4617-b830-088a01227994",
+      "name": "PL - BI - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nClassify this job offer from Pracuj.pl.\n\nTitle: {{ $json.title }}\nRequirements: {{ $json.requirements }}\nTechnologies: {{ $json.technologies }}\nExperience level: {{ $json.positionLevels }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title and requirements.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, -288],
+      "id": "44f783d9-5c76-41e3-a178-dc007a0142fd",
+      "name": "PL - DE - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nClassify this job offer from Pracuj.pl.\n\nTitle: {{ $json.title }}\nRequirements: {{ $json.requirements }}\nTechnologies: {{ $json.technologies }}\nExperience level: {{ $json.positionLevels }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title and requirements.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, -160],
+      "id": "52814831-a58d-46ee-86b0-dc6cf652e6bb",
+      "name": "PL - DS - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {"__rl": true, "value": "gpt-4o-mini", "mode": "list", "cachedResultName": "GPT-4O-MINI"},
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a job market analyst specializing in data roles.\nClassify this job offer from Pracuj.pl.\n\nTitle: {{ $json.title }}\nRequirements: {{ $json.requirements }}\nTechnologies: {{ $json.technologies }}\nExperience level: {{ $json.positionLevels }}\n\nTasks:\n1. Extract and normalize key skills to English (e.g. \"Excel\", \"SQL\", \"Python\"). If no skills provided, infer from the job title and requirements.\n2. Classify into ONE category based on title AND skills:\n   - data analyst (SQL, Excel, reporting, dashboards, BI tools)\n   - data scientist (Python, ML, statistics, modeling, research)\n   - business intelligence (Power BI, Tableau, Qlik, data warehousing)\n   - machine learning / ai (AI, deep learning, LLM, NLP, computer vision)\n   - data engineer (pipelines, ETL, Spark, Kafka, cloud data)\n   - data governance / quality (data quality, MDM, compliance)\n   - data architect (architecture, modeling, data strategy)\n   - irrelevant (not a data role - physical work, sales, unrelated field)\n   - other (data role but doesn't fit above categories)\n\nReturn ONLY valid JSON:\n{\n  \"skills\": [\"skill1\", \"skill2\"],\n  \"category\": \"one of the categories above\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [752, -32],
+      "id": "af4ceb58-5c1d-46f4-b249-b680efbeaa6d",
+      "name": "PL - DA - GPT Analysis",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "openAiApi": {"id": "7413kTqDG2tOxQ9Q", "name": "OpenAI account"}
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, -544],
+      "id": "005290c5-ccc6-42c0-b2c1-febac00b9e3c",
+      "name": "PL - GET ML"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, -416],
+      "id": "131e2aa0-ecf8-4618-a63f-68596bc1456f",
+      "name": "PL - GET BI"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, -288],
+      "id": "4851b552-dea7-49bd-aa96-076640094d76",
+      "name": "PL - GET DE"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, -160],
+      "id": "22c5f2f6-9fbf-44d3-a221-de622f348627",
+      "name": "PL - GET DS"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{"name": "token", "value": "REDACTED_APIFY_TOKEN"}]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [576, -32],
+      "id": "50a3d1ad-4cde-4530-999f-bd8d2334f21b",
+      "name": "PL - GET DA"
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, -544],
+      "id": "58f689c3-c066-4a7e-9750-9748a9a0f8f0",
+      "name": "ML Merge"
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, -416],
+      "id": "1ae92da9-eda9-4819-94b6-cb05ca178900",
+      "name": "BI Merge"
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, -288],
+      "id": "76f86ada-caef-46ea-ab6c-6045c3e242be",
+      "name": "DE Merge"
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, -160],
+      "id": "a57ab077-d189-43d4-acbd-02d81002f283",
+      "name": "DS Merge"
+    },
+    {
+      "parameters": {"mode": "combine", "combineBy": "combineByPosition", "options": {}},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1040, -32],
+      "id": "5eae2d53-c029-4493-99cf-0a6ae59380ef",
+      "name": "DA Merge"
+    },
+    {
+      "parameters": {"numberInputs": 5},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [1216, -320],
+      "id": "db60411f-5e0b-4bdc-b492-01bef27e4cf1",
+      "name": "PL - Merge All"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [[
+        {"node": "JJI - POST Apify", "type": "main", "index": 0},
+        {"node": "PL - POST data analyst", "type": "main", "index": 0},
+        {"node": "PL - POST data science", "type": "main", "index": 0},
+        {"node": "PL - POST data engineer", "type": "main", "index": 0},
+        {"node": "PL - POST business intelligence", "type": "main", "index": 0},
+        {"node": "PL - POST machine learning", "type": "main", "index": 0}
+      ]]
+    },
+    "PL - POST data analyst": {"main": [[{"node": "PL - Wait DA", "type": "main", "index": 0}]]},
+    "PL - POST data science": {"main": [[{"node": "PL - Wait DS", "type": "main", "index": 0}]]},
+    "PL - POST data engineer": {"main": [[{"node": "PL - Wait DE", "type": "main", "index": 0}]]},
+    "PL - POST business intelligence": {"main": [[{"node": "PL - Wait BI", "type": "main", "index": 0}]]},
+    "PL - POST machine learning": {"main": [[{"node": "PL - Wait ML", "type": "main", "index": 0}]]},
+    "JJI - POST Apify": {"main": [[{"node": "JJI - Wait", "type": "main", "index": 0}]]},
+    "JJI - Wait": {"main": [[{"node": "JJI - GET Results", "type": "main", "index": 0}]]},
+    "JJI - GET Results": {
+      "main": [[
+        {"node": "JJI - GPT Analysis", "type": "main", "index": 0},
+        {"node": "JJI - Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "JJI - GPT Analysis": {"main": [[{"node": "JJI - Merge", "type": "main", "index": 0}]]},
+    "JJI - Merge": {"main": [[{"node": "JJI - Code", "type": "main", "index": 0}]]},
+    "JJI - Code": {"main": [[{"node": "Append row in sheet", "type": "main", "index": 0}]]},
+    "PL - Wait DA": {"main": [[{"node": "PL - GET DA", "type": "main", "index": 0}]]},
+    "PL - Wait DS": {"main": [[{"node": "PL - GET DS", "type": "main", "index": 0}]]},
+    "PL - Wait DE": {"main": [[{"node": "PL - GET DE", "type": "main", "index": 0}]]},
+    "PL - Wait BI": {"main": [[{"node": "PL - GET BI", "type": "main", "index": 0}]]},
+    "PL - Wait ML": {"main": [[{"node": "PL - GET ML", "type": "main", "index": 0}]]},
+    "PL - Code": {"main": [[{"node": "Append row in sheet", "type": "main", "index": 0}]]},
+    "PL - ML - GPT Analysis": {"main": [[{"node": "ML Merge", "type": "main", "index": 0}]]},
+    "PL - BI - GPT Analysis": {"main": [[{"node": "BI Merge", "type": "main", "index": 0}]]},
+    "PL - DE - GPT Analysis": {"main": [[{"node": "DE Merge", "type": "main", "index": 0}]]},
+    "PL - DS - GPT Analysis": {"main": [[{"node": "DS Merge", "type": "main", "index": 0}]]},
+    "PL - DA - GPT Analysis": {"main": [[{"node": "DA Merge", "type": "main", "index": 0}]]},
+    "PL - GET ML": {
+      "main": [[
+        {"node": "PL - ML - GPT Analysis", "type": "main", "index": 0},
+        {"node": "ML Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "PL - GET BI": {
+      "main": [[
+        {"node": "PL - BI - GPT Analysis", "type": "main", "index": 0},
+        {"node": "BI Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "PL - GET DE": {
+      "main": [[
+        {"node": "PL - DE - GPT Analysis", "type": "main", "index": 0},
+        {"node": "DE Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "PL - GET DS": {
+      "main": [[
+        {"node": "PL - DS - GPT Analysis", "type": "main", "index": 0},
+        {"node": "DS Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "PL - GET DA": {
+      "main": [[
+        {"node": "PL - DA - GPT Analysis", "type": "main", "index": 0},
+        {"node": "DA Merge", "type": "main", "index": 1}
+      ]]
+    },
+    "ML Merge": {"main": [[{"node": "PL - Merge All", "type": "main", "index": 0}]]},
+    "BI Merge": {"main": [[{"node": "PL - Merge All", "type": "main", "index": 1}]]},
+    "DE Merge": {"main": [[{"node": "PL - Merge All", "type": "main", "index": 2}]]},
+    "DS Merge": {"main": [[{"node": "PL - Merge All", "type": "main", "index": 3}]]},
+    "DA Merge": {"main": [[{"node": "PL - Merge All", "type": "main", "index": 4}]]},
+    "PL - Merge All": {"main": [[{"node": "PL - Code", "type": "main", "index": 0}]]}
+  },
+  "active": false,
+  "settings": {"executionOrder": "v1", "binaryMode": "separate"},
+  "versionId": "691ed0f8-f26d-4420-82d9-3b98445f97de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED_INSTANCE_ID"
+  },
+  "id": "VdtfdNwMD1ZiYF5s",
+  "tags": []
+}
