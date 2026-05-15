@@ -100,10 +100,13 @@ Two-page interactive dashboard with star schema (Offers fact table + OfferSkills
 ### Interactive Features
  
 **Multi-level treemap interaction hierarchy** on `Offers by City`:
- 
+
 - **Hover** → custom tooltip preview (lightweight)
-- **Click** → cross-filter rest of Page 1
+- **Click** → cross-filter rest of Page 1; "Drillthrough" button activates
 - **Right-click** → "Select a City to Drillthrough" → committed deep-dive to Page 2
+
+![Click cross-filter applied](images/page1_city_selected.png)
+
 ![Drillthrough to Kraków](images/drillthrough_krakow.png)
  
 **Custom tooltip pages** (three total):
