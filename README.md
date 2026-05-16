@@ -61,9 +61,11 @@ Sheets serves as the staging layer between n8n pipeline and Power BI. New scrape
 The Power Query stack handles real-world data messiness:
  
 - **Polish → English normalization**: workplace types (`Praca hybrydowa` → `Hybrid`), employment types (`Umowa o pracę` → `Permanent`), experience levels (13 raw values consolidated into 4: Junior / Mid / Senior / Lead-Manager), city name variants (`Warsaw` → `Warszawa`)
+- **Poland-only scope filter**: explicit blacklist of ~34 non-Polish cities (Berlin, Stockholm, Copenhagen, Vilnius, Paris, ...) removed at transformation layer. International postings occasionally leak through Polish portals when foreign companies recruit remote; the filter keeps the dashboard focused on its actual scope.
 - **10-step company name entity resolution**: handles 30+ legal form variants (`Sp. z o.o.`, `Spółka Z O. O.`, `Sp.Z.O.O.`, ...) → unified format, plus brand consolidation (PKO Bank Polski, AXA, BNP Paribas)
 - **Two-stage deduplication**: by link first (technical re-scrape dupes), then by title × city × company (cross-posted offers between platforms)
 - **Gender marker stripping**: removes Polish convention `(K/M/X)`, `[K/M]`, `| K/M/D` patterns from job titles via static list of ~50 variants
+- **Tech-aware skill casing**: 18 manual overrides applied after Title Case normalization to preserve tech naming conventions (SQL not "Sql", PyTorch not "Pytorch", Power BI not "Power Bi", JavaScript not "Javascript", ...) plus consolidation of common abbreviations (ML → Machine Learning).
 - **Salary format auto-detection**: classifies offers as Hourly/Daily/Monthly/Yearly based on Salary From magnitude (`<500` = Hourly, `<2000` = Daily, `<100000` = Monthly, `≥100000` = Yearly), normalizes all to monthly PLN
 - **Outlier filter**: removes offers where `salary_to > 20 × salary_from` (anomalies from mixed-unit ranges, e.g., hourly From with monthly To)
 Full Power Query M code: [`powerquery/offers.m`](powerquery/offers.m) (main fact table), [`powerquery/offerskills.m`](powerquery/offerskills.m) (bridge to skills dimension).
@@ -168,6 +170,7 @@ Different metric per question type, by design:
  
 - **Skill extraction success rate: 99.1%** (2,999 of 3,025 offers). 26 offers (~0.9%) failed primarily due to sparse descriptions where neither explicit skills nor GPT title-based inference yielded results. Documented rather than masked.
 - **Salary analysis based on 37.5% disclosed sample**. Subset scope flagged via KPI header on Page 2.
+- **Salary disclosure rate is market reality, not data artifact**: Apify scrape configured with `withSalary: false` — all offers are captured regardless of salary disclosure. The 37.5% disclosure rate reflects how Polish portals actually look, not a filtering decision.
 - **Sample size caveat**: niche skill × Lead/Manager combinations in the Skills Strategy scatter tooltip can show noisy salary averages (n=5-10 disclosed offers per cell). Accepted as transparent limitation rather than filtered cosmetically.
 - **Junior and Lead-Manager seniority underrepresented**: due to the ~3,000 scope cap, Junior (~8% of offers) and Lead-Manager (~4%) are sparse. Mid (~49%) and Senior (~39%) dominate the dataset. Conclusions about Junior pay levels or Lead-Manager skill prevalence should be tempered accordingly.
 ### Conscious Design Decisions
