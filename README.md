@@ -41,6 +41,7 @@ n8n orchestrates the entire workflow: triggers Apify scrapers (one per category 
 - **Diversity**: 892 distinct companies, 150 cities, 2,387 distinct skills
 - **Pracuj.pl strategy**: separate scraping branches per data role category (analyst, engineer, BI, ML/AI, etc.) for better coverage of niche segments
 - **JustJoin.it strategy**: single endpoint returning structured data per offer
+- **Scope decision**: scraping intentionally capped at ~3,000 offers to manage API costs as a portfolio project. Limits are configurable per-branch via the `maxResults` parameter in Pracuj.pl POST nodes (currently `1000` each) and the `limit` parameter in the JustJoin.it POST node (currently `1250`). Modifying these in the HTTP request bodies scales the pipeline to ~6,000 raw offers before deduplication. 
 ### 2. AI Classification (GPT-4o-mini)
  
 Single-pass extraction per offer:
@@ -70,6 +71,20 @@ Full Power Query M code: [`powerquery/offers.m`](powerquery/offers.m) (main fact
 ### 5. Analytics (Power BI)
  
 Two-page interactive dashboard with star schema (Offers fact table + OfferSkills bridge), custom tooltip pages, drillthrough navigation, and bookmark-driven info panels. Custom DAX measures handle bridge-table filter propagation via `CROSSFILTER` for skill-level salary analysis.
+
+### Engineering Iteration: Why Parallel Branches?
+
+The initial workflow design was concise — all scraped offers merged into two streams (one per source), each routed through a single GPT classification node. Simple, fewer nodes to maintain.
+
+In practice this proved fragile. Transient API issues on either Apify or OpenAI side would hang or abort the entire scrape mid-stream, requiring full re-runs. Failure cascaded across all categories.
+
+The current design splits Pracuj.pl scraping into **five parallel branches** (one per data role category: data analyst, data science, data engineer, business intelligence, machine learning). Smaller batches per LLM call means:
+
+- Lower probability of any single batch hitting an API timeout
+- Failed branches don't block successful ones — partial recovery possible without re-running everything
+- Per-category visibility in n8n's execution graph for easier debugging
+
+Trade-off: more nodes to maintain, slightly higher orchestration overhead. Worth it — workflow now completes consistently on first execution.
  
 ## Power BI Dashboard
  
@@ -138,7 +153,7 @@ Different metric per question type, by design:
  
 - **Warsaw dominates**: alone holds 48% of all offers; top 3 cities (Warsaw, Kraków, Wrocław) account for 68% of the market
 - **Source asymmetry**: Pracuj.pl (73%) outscales JustJoin.it (27%) — different audiences captured by each platform
-- **"Other" category is largest** (~30%) — real-world classification mess preserved as a data quality disclaimer rather than force-classified
+- **"Other" category is largest** (~30% of all offers) — investigated via DAX measures: within "Other", the largest subgroup is non-data Business Analyst roles (~22% of "Other"), typically BAs in finance, operations, or process improvement contexts where GPT correctly identified the role as adjacent but not core data. Process Analysts are another notable subgroup. Real-world classification mess preserved as a data quality disclaimer rather than force-classified.
 - **Universal skills**: SQL, Python, and Excel dominate demand across all categories
 ### Compensation Patterns (Page 2)
  
@@ -154,8 +169,10 @@ Different metric per question type, by design:
 - **Skill extraction success rate: 99.1%** (2,999 of 3,025 offers). 26 offers (~0.9%) failed primarily due to sparse descriptions where neither explicit skills nor GPT title-based inference yielded results. Documented rather than masked.
 - **Salary analysis based on 37.5% disclosed sample**. Subset scope flagged via KPI header on Page 2.
 - **Sample size caveat**: niche skill × Lead/Manager combinations in the Skills Strategy scatter tooltip can show noisy salary averages (n=5-10 disclosed offers per cell). Accepted as transparent limitation rather than filtered cosmetically.
+- **Junior and Lead-Manager seniority underrepresented**: due to the ~3,000 scope cap, Junior (~8% of offers) and Lead-Manager (~4%) are sparse. Mid (~49%) and Senior (~39%) dominate the dataset. Conclusions about Junior pay levels or Lead-Manager skill prevalence should be tempered accordingly.
 ### Conscious Design Decisions
- 
+
+- **Mean displayed as the single salary metric on visuals**: across all slicer combinations (category, workplace, experience level, employment type), Mean and Median values consistently converged within 1-3% of each other — symmetric distribution holds robustly. Showing both on the same chart added visual noise without analytical value. Both metrics still visible as separate KPI cards on Page 2 header for transparency.
 - **"Other" category retained at ~30%** rather than force-fitting offers into adjacent categories. Better to surface a classification limitation than introduce false signal.
 - **Tooltip metrics vary by question**: counts for city tooltip (volume question), percentages for skill prevalence (penetration question), salary ranges for scatter (expectations question). Consistent metric would be visually tidier but analytically weaker.
 - **Quadrant shading via stacked reference-line `shade-area`** rather than static rectangle overlay. Reference-line shading is data-bound and follows median lines under filters and zoom; rectangle overlay would drift relative to dynamic medians.
@@ -172,7 +189,7 @@ Different metric per question type, by design:
 ai-job-market-intelligence/
 ├── README.md
 ├── LICENSE
-├── workflow.json              # n8n workflow export (credentials redacted)
+├── workflow.json              # n8n workflow export (API tokens & document IDs redacted)
 ├── dashboard.pbix             # Power BI dashboard file
 ├── powerquery/
 │   ├── offers.m              # Offers fact table M code
@@ -180,6 +197,7 @@ ai-job-market-intelligence/
 └── images/
     ├── page1_offers.png
     ├── page2_salary.png
+    ├── page1_city_selected.png
     ├── tooltip_city.png
     ├── tooltip_skill_prevalence.png
     ├── tooltip_salary_range.png
@@ -200,10 +218,10 @@ ai-job-market-intelligence/
  
 1. Set up [n8n](https://n8n.io) instance (cloud or self-hosted)
 2. Import `workflow.json` via n8n's Import feature
-3. Configure credentials (originals redacted on export):
-   - **Apify** API token (for actor execution)
-   - **OpenAI** API key (for GPT-4o-mini calls)
-   - **Google Sheets** OAuth or service account
+3. Configure credentials. The exported `workflow.json` has Apify API tokens replaced with `REDACTED_APIFY_TOKEN`, Google Sheets document ID with `REDACTED_SHEET_ID`, and instance ID with `REDACTED_INSTANCE_ID`. You'll need to provide your own:
+   - **Apify** API token (for actor execution) — replace `REDACTED_APIFY_TOKEN` across HTTP request nodes
+   - **OpenAI** API key (for GPT-4o-mini calls) — configured separately in n8n credentials
+   - **Google Sheets** OAuth or service account — replace `REDACTED_SHEET_ID` with your spreadsheet ID
 4. Configure Sheets destination: spreadsheet ID and target tab
 5. Execute workflow manually or attach Schedule trigger for automation
 ### Power Query Code Inspection
