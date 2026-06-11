@@ -249,9 +249,11 @@ For data engineering review without Power BI Desktop: M code is exported to `pow
 - **Analytics**: Power BI (DAX measures, custom visuals, bookmarks, drillthrough)
 ## Author
  
-**Marcel Fronczyk** — Corporate Finance consultant exploring data-focused roles.
- 
-- GitHub: [@marcelFRO](https://github.com/marcelFRO)
+**Marcel Fronczyk**
+
+Corporate finance consultant transitioning into data analytics / BI roles. This is Portfolio Project #1.
+
+- GitHub: [github.com/marcelFRO](https://github.com/marcelFRO)
 - Portfolio Project #2: [Stakeholder-Driven E-Commerce Analytics](https://github.com/marcelFRO/ecommerce-analytics) — SQL Server + Power BI deep dive on fictitious clothing e-commerce data
 ---
  
